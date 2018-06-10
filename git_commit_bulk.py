@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 '''Git: Commits multiple files in separate commits.
 '''
 
