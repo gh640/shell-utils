@@ -3,23 +3,11 @@
 
 import argparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import xml.etree.ElementTree as ET
-from xml.sax.saxutils import escape
+import unittest
+from unittest import mock
 
 import requests
 
-DATA_TEMPLATE = '''
-<methodCall>
-<methodName>bookmark.getTotalCount</methodName>
-<params>
-  <param>
-    <value>
-      <string>{}</string>
-    </value>
-  </param>
-</params>
-</methodCall>
-'''
 MAX_WORKERS = 5
 
 
@@ -46,20 +34,30 @@ def get_hatena_counts_async(urls):
 
 
 def get_hatena_count_for_site(url):
-    request_url = 'http://b.hatena.ne.jp/xmlrpc'
-    r = requests.post(
-        request_url,
-        headers={'Content-Type': 'text/xml'},
-        data=build_request_data(DATA_TEMPLATE, [url]),
-    )
-    tree = ET.fromstring(r.text)
-    count = tree.find('.//int').text
+    request_url = 'http://api.b.st-hatena.com/entry.total_count'
+    payload = {'url': url}
+    r = requests.get(request_url, params=payload)
+    count = r.json()['total_bookmarks']
 
     return url, count
 
 
-def build_request_data(template, params):
-    return template.format(*(escape(x) for x in params))
+class TestGetHatenaCountsAsync(unittest.TestCase):
+    @mock.patch('hatena_counts_for_sites.get_hatena_count_for_site')
+    def test_with_mock(self, func):
+        dummy_result = 'url', 5
+        count = 20
+        func.return_value = dummy_result
+        results = get_hatena_counts_async(['dummy_url'] * count)
+        self.assertEquals(results, [dummy_result] * count)
+
+
+class TestGetHatenaCountForSite(unittest.TestCase):
+    def test_google(self):
+        url_req = 'https://www.google.co.jp'
+        url, count = get_hatena_count_for_site(url_req)
+        self.assertEquals(url, url_req)
+        self.assertIsInstance(count, int)
 
 
 if __name__ == '__main__':
