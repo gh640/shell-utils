@@ -1,4 +1,4 @@
-'''Checks, hatena bookmark counts for sites.
+'''Checks hatena bookmark counts for sites.
 '''
 
 import argparse
