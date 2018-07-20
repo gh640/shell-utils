@@ -7,7 +7,8 @@ import subprocess
 
 
 def main():
-    args = get_args()
+    parser = get_parser()
+    args = parser.parse_args()
     socket, user, database = args.socket, args.user, args.database
 
     client = Client()
@@ -16,23 +17,21 @@ def main():
     else:
         client.set_user(user)
 
-    if database:
-        client.check_table_sizes(database)
-    else:
-        client.check_database_sizes()
+    try:
+        if database:
+            client.check_table_sizes(database)
+        else:
+            client.check_database_sizes()
+    except ClientException as e:
+        parser.error(e)
 
 
-def get_args():
+def get_parser():
     parser = argparse.ArgumentParser(description='MySQL データベースのサイズをチェックする')
     parser.add_argument('--socket', '-S', nargs='?')
     parser.add_argument('--user', '-u', nargs='?', default=getpass.getuser())
     parser.add_argument('database', nargs='?')
-    args = parser.parse_args()
-    if args.database:
-        database = args.database
-        if not is_valid_database_param(database):
-            parser.error('指定されたデータベース名に不正な文字が含まれています: `{}`'.format(database))
-    return args
+    return parser
 
 
 def is_valid_database_param(database_name):
@@ -64,6 +63,9 @@ class Client:
         self.run_query(sql)
 
     def check_table_sizes(self, database):
+        if not is_valid_database_param(database):
+            raise ClientException('指定されたデータベース名に不正な文字が含まれています: `{}`'.format(database))
+
         sql = '''
         SELECT table_name AS "テーブル",
             ROUND(((data_length + index_length) / 1024 / 1024), 1) AS "サイズ (MB)"
@@ -78,9 +80,16 @@ class Client:
     def run_query(self, sql):
         if self.socket:
             command = ['mysql', '-S', self.socket, '-e', sql]
-        else:
+        elif self.user:
             command = ['mysql', '-u', self.user, '-e', sql]
+        else:
+            raise ClientException('ソケットまたはユーザを指定してください')
+
         subprocess.run(command)
+
+
+class ClientException(Exception):
+    pass
 
 
 if __name__ == '__main__':
