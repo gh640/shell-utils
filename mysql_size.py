@@ -4,6 +4,8 @@
 import argparse
 import getpass
 import subprocess
+import unittest
+from unittest import mock
 
 
 def main():
@@ -90,6 +92,51 @@ class Client:
 
 class ClientException(Exception):
     pass
+
+
+class TestFunctions(unittest.TestCase):
+    def test_is_valid_database_param__valid_name(self):
+        result = is_valid_database_param('valid_name')
+        self.assertTrue(result)
+
+    def test_is_valid_database_param__invalid_name(self):
+        result = is_valid_database_param('data;base')
+        self.assertFalse(result)
+
+        result = is_valid_database_param('data"base')
+        self.assertFalse(result)
+
+        result = is_valid_database_param("data'base")
+        self.assertFalse(result)
+
+
+class TestClient(unittest.TestCase):
+    @mock.patch.object(subprocess, 'run')
+    def test_run_query__socket(self, run):
+        socket = 'SOCKET'
+        sql = 'SELECT SUM(*) FROM table'
+
+        client = Client()
+        client.set_socket(socket)
+        client.run_query(sql)
+        run.assert_called_once_with(['mysql', '-S', socket, '-e', sql])
+
+    @mock.patch.object(subprocess, 'run')
+    def test_run_query__user(self, run):
+        user = 'user'
+        sql = 'SELECT SUM(*) FROM table'
+
+        client = Client()
+        client.set_user(user)
+        client.run_query(sql)
+        run.assert_called_once_with(['mysql', '-u', user, '-e', sql])
+
+    def test_run_query__error(self):
+        sql = 'SELECT SUM(*) FROM table'
+
+        with self.assertRaises(ClientException):
+            client = Client()
+            client.run_query(sql)
 
 
 if __name__ == '__main__':
