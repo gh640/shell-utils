@@ -1,4 +1,4 @@
-'''MySQL データベースのサイズを取得する
+'''Gets MySQL databases/tables sizes.
 '''
 
 import argparse
@@ -29,7 +29,7 @@ def main():
 
 
 def get_parser():
-    parser = argparse.ArgumentParser(description='MySQL データベースのサイズをチェックする')
+    parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--socket', '-S', nargs='?')
     parser.add_argument('--user', '-u', nargs='?', default=getpass.getuser())
     parser.add_argument('database', nargs='?')
@@ -37,7 +37,7 @@ def get_parser():
 
 
 def is_valid_database_param(database_name):
-    '''簡易的なインジェクション対策を行う（標準ライブラリの範囲でできることをやる）'''
+    '''Validates a database name to prevent SQL injection.'''
     for char in ('"', "'", ';'):
         if char in database_name:
             return False
@@ -57,8 +57,8 @@ class Client:
 
     def check_database_sizes(self):
         sql = '''
-        SELECT table_schema AS "データベース",
-            ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS "サイズ (MB)"
+        SELECT table_schema AS "Database",
+            ROUND(SUM(data_length + index_length) / 1024 / 1024, 1) AS "Size (MB)"
             FROM information_schema.TABLES
             GROUP BY table_schema;
         '''
@@ -66,11 +66,13 @@ class Client:
 
     def check_table_sizes(self, database):
         if not is_valid_database_param(database):
-            raise ClientException('指定されたデータベース名に不正な文字が含まれています: `{}`'.format(database))
+            raise ClientException(
+                'Invalid character is in specified database name: `{}`'.format(database)
+            )
 
         sql = '''
-        SELECT table_name AS "テーブル",
-            ROUND(((data_length + index_length) / 1024 / 1024), 1) AS "サイズ (MB)"
+        SELECT table_name AS "Table",
+            ROUND(((data_length + index_length) / 1024 / 1024), 1) AS "Size (MB)"
             FROM information_schema.TABLES
             WHERE table_schema = "{database}"
             ORDER BY (data_length + index_length) DESC;

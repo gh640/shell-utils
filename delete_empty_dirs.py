@@ -1,4 +1,4 @@
-'''指定されたディレクトリの直下の空のディレクトリを全件削除する
+'''Deletes empty directories under a directory.
 '''
 
 import argparse
@@ -25,7 +25,13 @@ def get_args():
     '''Get command line arguments.'''
     parser = argparse.ArgumentParser('Remove empty directories.')
     parser.add_argument('path', help='Path to search files.')
-    parser.add_argument('-d', '--dry-run', dest='is_dry_run', action='store_true', help='Dry run setting.')
+    parser.add_argument(
+        '-d',
+        '--dry-run',
+        dest='is_dry_run',
+        action='store_true',
+        help='Dry run setting.',
+    )
 
     args = parser.parse_args()
 
