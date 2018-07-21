@@ -1,4 +1,4 @@
-'''Get Google Chrome bookmark entries
+'''Get Google Chrome bookmark entries.
 '''
 
 import csv
@@ -12,7 +12,7 @@ config = {
     'chrome_bookmark_path': (
         '/Users/{username}/Library/Application Support/'
         'Google/Chrome/Default/Bookmarks'
-    ).format(username=getpass.getuser()),
+    ).format(username=getpass.getuser())
 }
 
 
@@ -56,6 +56,7 @@ class Printer:
     - Prints a boomark entry.
     - Stores the count of times the method is invoked.
     '''
+
     def __init__(self, print_strategy):
         self.print_strategy = print_strategy
         self.count = 0
@@ -85,12 +86,9 @@ class CsvPrintStrategy:
         self.writer = csv.writer(sys.stdout)
 
     def print(self, entry) -> None:
-        self.writer.writerow([
-            entry['id'],
-            entry['name'],
-            entry['date_added'],
-            entry['url'],
-        ])
+        self.writer.writerow(
+            [entry['id'], entry['name'], entry['date_added'], entry['url']]
+        )
 
 
 if __name__ == '__main__':
