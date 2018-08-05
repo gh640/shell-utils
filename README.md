@@ -14,6 +14,7 @@ Miscellaneous utilities for shell.
 - `delete_empty_dirs.py`: Deletes empty directories under a directory.
 - `git_commit_bulk.py`: Git: Commits multiple files in separate commits.
 - `hatena_counts_for_sites.py`: Checks hatena bookmark counts for sites.
+- `less_sjis.py`: Shows a file encoded with SJIS with `less`.
 - `mysql_size.py`: Gets MySQL databases/tables sizes.
 
 ### `.sh`
