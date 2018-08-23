@@ -16,6 +16,7 @@ Miscellaneous utilities for shell.
 - `hatena_counts_for_sites.py`: Checks hatena bookmark counts for sites.
 - `less_sjis.py`: Shows a file encoded with SJIS with `less`.
 - `mysql_size.py`: Gets MySQL databases/tables sizes.
+- `php_class_declaration.py`: Gather class/interface/trait declarations in php files.
 
 ### `.sh`
 
