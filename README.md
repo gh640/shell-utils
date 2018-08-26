@@ -15,6 +15,7 @@ Miscellaneous utilities for shell.
 - `git_commit_bulk.py`: Git: Commits multiple files in separate commits.
 - `hatena_counts_for_sites.py`: Checks hatena bookmark counts for sites.
 - `less_sjis.py`: Shows a file encoded with SJIS with `less`.
+- `locate_git_dirs.py`: Finds git-enabled directories in a path.
 - `mysql_size.py`: Gets MySQL databases/tables sizes.
 - `php_class_declaration.py`: Gather class/interface/trait declarations in php files.
 
