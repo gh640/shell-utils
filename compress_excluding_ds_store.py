@@ -7,7 +7,7 @@
 import argparse
 import zipfile
 from pathlib import Path
-from typing import Iterable, List, Generator
+from typing import Iterable, List, Iterator
 
 
 settings = {'zip_extension': '.zip', 'verbose': False}
@@ -96,7 +96,7 @@ def compress_dir(zip_out: Path, directory: Path, skipped_names: Iterable[str]):
                 print('Added: "{}".'.format(f))
 
 
-def iter_all_files(directory: Path) -> Generator[Path]:
+def iter_all_files(directory: Path) -> Iterator[Path]:
     """Aggregates the file paths in a directory recursively."""
     if not directory.is_dir():
         message = 'Specified directory is not found: "{}".'.format(directory)
