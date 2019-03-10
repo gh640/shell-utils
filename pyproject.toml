@@ -2,10 +2,12 @@
 name = "shell-utils"
 version = "0.1.0"
 description = "🍱 Miscellaneous utilities for shell."
+authors = ["Goto Hayato <habita.gh@gmail.com>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
 python = "^3.6"
+requests = "^2.21"
 
 [tool.poetry.dev-dependencies]
 
